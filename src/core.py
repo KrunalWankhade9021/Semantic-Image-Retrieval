@@ -12,10 +12,12 @@ class SemanticSearcher:
         self.processor = None
         self.index = None
         self.image_paths = []
+        self.device = "cpu"
+        self._loaded_model_name = None
 
     def load_model(self, model_name="openai/clip-vit-base-patch32"):
         """Loads the AI model and processor (Supports CLIP & SigLIP)."""
-        if self.model is not None and self.model.name_or_path == model_name:
+        if self.model is not None and self._loaded_model_name == model_name:
             print(f"Model {model_name} already loaded.")
             return
 
@@ -34,6 +36,7 @@ class SemanticSearcher:
                 self.device = "cpu"
                 
             self.model.to(self.device)
+            self._loaded_model_name = model_name
             print(f"Model loaded on {self.device}.")
         except Exception as e:
             print(f"Failed to load {model_name}: {e}")
@@ -124,7 +127,7 @@ class SemanticSearcher:
 
     def search(self, query_text, k=5):
         """Searches for images matching the query."""
-        if not self.index:
+        if self.index is None:
             print("Index is empty.")
             return []
             

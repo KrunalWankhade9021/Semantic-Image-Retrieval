@@ -2,5 +2,7 @@ torch
 transformers
 pillow
 faiss-cpu
-streamlit
 numpy
+fastapi
+uvicorn[standard]
+python-multipart

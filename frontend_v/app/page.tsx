@@ -68,6 +68,7 @@ export default function HomePage() {
             <IndexPanel
               isIndexing={isIndexing}
               setIsIndexing={setIsIndexing}
+              modelLoaded={status?.model_loaded ?? false}
               onIndexComplete={() => {
                 window.location.reload()
               }}

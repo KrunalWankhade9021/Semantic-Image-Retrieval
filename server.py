@@ -18,7 +18,7 @@ app = FastAPI(title="Semantic Image Search API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -47,6 +47,36 @@ class IndexRequest(BaseModel):
 class SearchRequest(BaseModel):
     query: str
     k: Optional[int] = 10
+
+# --- Browse folder (native OS dialog) ---
+@app.get("/api/browse")
+async def browse_folder():
+    """Open native OS folder picker and return the selected path."""
+    import threading
+
+    result = {"path": None}
+
+    def _open_dialog():
+        try:
+            import tkinter as tk
+            from tkinter import filedialog
+            root = tk.Tk()
+            root.withdraw()
+            root.attributes("-topmost", True)
+            folder = filedialog.askdirectory(title="Select Image Folder")
+            root.destroy()
+            if folder:
+                result["path"] = folder
+        except Exception:
+            pass
+
+    thread = threading.Thread(target=_open_dialog)
+    thread.start()
+    thread.join(timeout=120)
+
+    if result["path"]:
+        return {"path": result["path"]}
+    raise HTTPException(status_code=400, detail="No folder selected")
 
 # --- Status ---
 @app.get("/api/status")

@@ -7,6 +7,7 @@ This guide will walk you through setting up and running the project on your loca
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed to run this project locally:
+
 - **Python 3.9+** (for the AI backend)
 - **Node.js 18+** (for the frontend)
 - **pnpm** (Package manager for the frontend, install via `npm install -g pnpm`)
@@ -59,17 +60,23 @@ The frontend is a modern web interface built with React, Next.js, and Tailwind C
 You will need to run **both** the frontend and backend simultaneously in two different terminal windows.
 
 ### Start the AI Backend Server
+
 In your first terminal (where the Python `.venv` is activated and you are in the project root):
+
 ```bash
-python -m uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+ython -m uvicorn server:app --host 0.0.0.0 --port 8000 --reload
 ```
+
 *The backend API will start running at `http://localhost:8000`.*
 
 ### Start the Next.js Frontend
+
 In your second terminal (inside the `frontend_v` folder):
+
 ```bash
 pnpm dev
 ```
+
 *The frontend interface will start running at `http://localhost:3000`.*
 
 ---

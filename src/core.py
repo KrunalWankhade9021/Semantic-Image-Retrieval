@@ -14,6 +14,7 @@ class SemanticSearcher:
         self.image_paths = []
         self.device = "cpu"
         self._loaded_model_name = None
+        self.last_error = None
 
     def load_model(self, model_name="openai/clip-vit-base-patch32"):
         """Loads the AI model and processor (Supports CLIP & SigLIP)."""
@@ -51,7 +52,9 @@ class SemanticSearcher:
                 embedding = self.model.get_image_features(**inputs)
             return embedding.cpu().numpy()
         except Exception as e:
-            print(f"Error processing {image_path}: {e}")
+            error_msg = f"Error processing {image_path}: {str(e)}"
+            print(error_msg)
+            self.last_error = error_msg
             return None
 
     def index_directory(self, directory_paths):

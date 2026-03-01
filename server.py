@@ -18,7 +18,7 @@ app = FastAPI(title="Semantic Image Search API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -88,6 +88,7 @@ def get_status():
         "indexed": searcher.index is not None,
         "image_count": len(searcher.image_paths),
         "indexing_in_progress": _indexing_in_progress,
+        "last_error": getattr(searcher, "last_error", None),
     }
 
 # --- Indexing ---
@@ -224,6 +225,13 @@ async def upload_images(files: list[UploadFile] = File(...)):
 
     return {"uploaded": len(saved), "paths": saved, "upload_dir": UPLOAD_DIR}
 
+# --- Serve Frontend (Static Files) ---
+# Serve the Next.js static export. Must be placed last so API routes take precedence.
+out_dir = os.path.join(os.getcwd(), "frontend", "out")
+if os.path.exists(out_dir):
+    app.mount("/", StaticFiles(directory=out_dir, html=True), name="static")
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("server:app", host="0.0.0.0", port=port, reload=True)

@@ -23,8 +23,8 @@ COPY --chown=user src/ src/
 COPY --chown=user server.py .
 
 # Build frontend
-COPY --chown=user frontend_v/ frontend_v/
-WORKDIR /app/frontend_v
+COPY --chown=user frontend/ frontend/
+WORKDIR /app/frontend
 RUN pnpm install && pnpm run build
 
 # Go back to app root

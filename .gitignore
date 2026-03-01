@@ -34,3 +34,12 @@ env/
 # Project Specific
 tests/test_images/
 MobileUploads/   # Don't commit uploaded images
+
+# Frontend ignores
+frontend/__v0_runtime_loader.js
+frontend/__v0_devtools.tsx
+frontend/__v0_jsx-dev-runtime.ts
+frontend/node_modules/
+frontend/.next/
+frontend/.env*.local
+frontend/.DS_Store

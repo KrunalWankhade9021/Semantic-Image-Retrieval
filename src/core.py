@@ -49,7 +49,8 @@ class SemanticSearcher:
             image = Image.open(image_path)
             inputs = self.processor(images=image, return_tensors="pt", padding=True).to(self.device)
             with torch.no_grad():
-                embedding = self.model.get_image_features(**inputs)
+                outputs = self.model.get_image_features(**inputs)
+                embedding = outputs.pooler_output if hasattr(outputs, "pooler_output") else (outputs[0] if isinstance(outputs, tuple) else outputs)
             return embedding.cpu().numpy()
         except Exception as e:
             error_msg = f"Error processing {image_path}: {str(e)}"
@@ -136,7 +137,9 @@ class SemanticSearcher:
             
         inputs = self.processor(text=[query_text], return_tensors="pt", padding=True).to(self.device)
         with torch.no_grad():
-            text_embedding = self.model.get_text_features(**inputs).cpu().numpy().astype('float32')
+            outputs = self.model.get_text_features(**inputs)
+            text_embedding_tensor = outputs.pooler_output if hasattr(outputs, "pooler_output") else (outputs[0] if isinstance(outputs, tuple) else outputs)
+            text_embedding = text_embedding_tensor.cpu().numpy().astype('float32')
         
         faiss.normalize_L2(text_embedding)
         
